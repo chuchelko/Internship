@@ -19,7 +19,7 @@ Employee employee = new Employee("name", "company");
 Person person = (Person)employee;
 
 //13
-person = new Person("name");
+person = new Employee("name", "company");
 employee = (Employee)person;
 
 //14
