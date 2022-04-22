@@ -2,9 +2,12 @@
 using Library.Third;
 using Library.Fourth;
 
-Car car1 = new Car(100);
-Car car2 = new Car("Волга");
-Car car3 = new Car("Bmw", 150);
+//Car car1 = new Car(100);
+//Car car2 = new Car("Волга");
+//Car car3 = new Car("Bmw", 150);
+//car1.Print();
+InheritedCar car = new InheritedCar("inherited", 20);
+car.Print();
 //без параметров даст эксепшн
 
 User user = new User(); //поля обнуляются в пустом конструкторе
