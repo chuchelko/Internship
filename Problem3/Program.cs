@@ -4,7 +4,7 @@
 3. константа становится статической переменной
 7. a ?? b возвращает а, если а не null, b в противном случае. 
 со значимыми типами применять можно, если они могут принимать null
-9. _name не наследуется, потому что помечен private. есть доступ к Name
+9. _name не можем получить доступ, потому что помечен private. есть доступ к Name
  */
 int? a = null;
 Console.WriteLine(a ?? 3);
@@ -16,14 +16,14 @@ Console.WriteLine(user?.Phone?.Company?.Name ?? "null");
 
 //12
 Employee employee = new Employee("name", "company");
-Person person = (Person)employee;
+Person person = employee;
 
 //13
 person = new Employee("name", "company");
 employee = (Employee)person;
 
 //14
-(person as Employee)!.Company = "company";
+(person as Employee).Company = "company";
 (employee as Person)!.Name = "name";
 
 class User
