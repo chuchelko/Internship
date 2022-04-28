@@ -1,6 +1,6 @@
 ﻿namespace Problem4;
 
-internal class ArrayClass<T>
+internal class ArrayClass<T> where T : struct
 {
     private T[] array;
     public int Length => array.Length;

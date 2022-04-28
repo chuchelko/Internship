@@ -1,6 +1,47 @@
 ﻿using Problem5;
 
+using static System.Console;
+
 Organization organization = new Organization();
+
+while (true)
+{
+    WriteLine(@"Добро пожаловать в организацию!
+1. Филиалы..
+2. Подразделения..
+3. Сотрудники..
+4. Показать расчетный лист");
+    int firstStep = int.Parse(ReadLine());
+
+    switch (firstStep)
+    {
+        case 1: BranchConsoleManager.Print(organization); break;
+        case 2: SubdivisionConsoleManager.Print(organization); break;
+        case 3: EmployeeConsoleManager.Print(organization); break;
+        case 4: PrintConsolePayslip(); break;
+        default: WriteLine("Такой команды нет"); break; 
+    }
+    WriteLine("\n\n");
+
+}
+
+void PrintConsolePayslip()
+{
+    WriteLine("Введите название филиала: ");
+    string name = ReadLine();
+
+    WriteLine("Введите номер подразделения: ");
+    int number = int.Parse(ReadLine());
+
+    WriteLine(organization.GetPayslip(name, number));
+}
+
+
+
+
+
+//Старый код, оставил на всякий случай
+/* organization = new Organization();
 organization.AddBranch("Branch 1");
 organization.AddBranch("Branch 2");
 int subdivision1 = organization.AddSubdivision();
@@ -45,4 +86,4 @@ Console.WriteLine("Сотрудников с зп больше 1500р: " + organ
 Console.WriteLine("Сотрудники, отработавшие все часы: " + organization.GetEndedWorkingEmployees());
 
 //9. список N сотрудников с наибольшим размером зарплаты в текущем месяце
-Console.WriteLine(organization.GetEmployeesWithHighestSalaries(2));
+Console.WriteLine(organization.GetEmployeesWithHighestSalaries(2));*/
