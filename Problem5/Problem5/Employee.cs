@@ -1,5 +1,7 @@
 ﻿namespace Problem5;
 
+public delegate decimal GetSalary(decimal salary, int hoursWorked);
+
 public class Employee
 {
     private static int _count = 0;
@@ -19,7 +21,9 @@ public class Employee
     public int HoursWorked { get; private set; }
     
     public decimal Salary { get; set; }
-    
+
+    private GetSalary getSalary;
+
     public Employee(string fullName, string position, SalaryType salaryType) : this()
     {
         FullName = fullName;
@@ -40,12 +44,24 @@ public class Employee
         HoursWorked += hours;
     }
     
+    private decimal GetSalaryMonthlyType(decimal salary, int hoursWorked)
+    {
+        return salary / ConstantsManager.HoursInMonth * hoursWorked;
+    }
+
+    private decimal GetSalaryHourlyType(decimal salary, int hoursWorked)
+    {
+        return salary * hoursWorked;
+    }
+
     public decimal GetMonthSalary()
     {
         if (SalaryType == SalaryType.Monthly)
-            return Salary / ConstantsManager.HoursInMonth * HoursWorked;
+            getSalary = GetSalaryMonthlyType;
         else
-            return Salary * HoursWorked;
+            getSalary = GetSalaryHourlyType;
+
+        return getSalary(Salary, HoursWorked);
     }
 }
 
