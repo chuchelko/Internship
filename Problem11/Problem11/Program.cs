@@ -7,6 +7,13 @@ namespace Problem11
 
     internal class Program
     {
+
+        static int i = 0;
+
+        static AutoResetEvent autoResetEvent = new AutoResetEvent(false);
+
+        static Mutex mutex = new Mutex(false);
+
         static void Main(string[] args)
         {
             //2.
@@ -19,7 +26,7 @@ namespace Problem11
 
             //3.Создать поток. Посмотреть статусы до запуска потока, после запуска потока, после остановки потока.
             Thread thread = new Thread(MethodForThread);
-            Console.WriteLine("Main " +thread.ThreadState);
+            Console.WriteLine("Main " + thread.ThreadState);
             thread.Start();
             Console.WriteLine("Main " + thread.ThreadState);
 
@@ -29,7 +36,7 @@ namespace Problem11
             //5. Создать поток, изменить его приоритетность на Highest. Запустить поток и вывести информацию о приоритете.
             Thread threadWithHighestPriority = new Thread(() =>
             {
-                    Console.WriteLine("highest priority");
+                Console.WriteLine("highest priority");
             });
             threadWithHighestPriority.Priority = ThreadPriority.Highest;
             threadWithHighestPriority.Start();
@@ -41,9 +48,9 @@ namespace Problem11
             Thread threadCount = new Thread(new ThreadStart(Count));
             threadCount.Start();
 
-            for (int i = 0; i < 10; i++)
+            for (i = 0; i < 10; i++)
             {
-                Console.WriteLine("Главный поток " + i * i);
+                Console.WriteLine("(без параметров) Главный поток " + i * i);
                 Thread.Sleep(300);
             }
 
@@ -59,44 +66,100 @@ namespace Problem11
             //Далее воспроизвести все, что было написано в пункте 7 с использованием ParameterizedThreadStart.
             //см. метод Count1
             Thread threadCount1 = new Thread(new ParameterizedThreadStart(Count1));
-            threadCount1.Start(10);
+            threadCount1.Start(i);
 
-            for (int i = 0; i < 10; i++)
+            for (i = 0; i < 10; i++)
             {
-                Console.WriteLine("Главный поток " + i * i);
-                Thread.Sleep(300);
+                Console.WriteLine("(с параметрами) Главный поток " + i * i);
+                Thread.Sleep(200);
             }
 
             threadCount1.Join();
+            i = 0;
 
 
             //11.Запустить код (у меня это в проекте AdditionalProgram, если убрать лок из 12 пункта) и посмотреть что произойдет
             //произошел бардак - переменная x делится между потоками, она общая для всех
 
             //12. Изучить lock. В выше указанном примере сделать синхронизацию потоков.
+
+
+            //задание 12.4
+            Thread threadCountAutoResetEvent = new Thread(new ThreadStart(CountAutoResetEvent));
+            threadCountAutoResetEvent.Start();
+
+            for (i = 0; i < 10; i++)
+            {
+                Console.WriteLine("(auto reset event) Главный поток " + i * i);
+                Thread.Sleep(300);
+            }
+
+            autoResetEvent.Set();
+            threadCountAutoResetEvent.Join();
+
+
+            //задание 12.7
+            Thread threadCountMutex = new Thread(new ThreadStart(CountMutex));
+            threadCountMutex.Start();
+            mutex.WaitOne();
+
+            for (i = 0; i < 10; i++)
+            {
+                Console.WriteLine("(mutex) Главный поток " + i * i);
+                Thread.Sleep(300);
+            }
+            
+            mutex.ReleaseMutex();
+            threadCountAutoResetEvent.Join();
+
+
         }
 
         static void MethodForThread() => Console.WriteLine(Thread.CurrentThread.ThreadState);
 
         static void Count()
         {
-            for(int i = 0; i < 10; i++)
+            for (i = 0; i < 10; i++)
             {
-                Console.WriteLine("Второй поток " + i * i);
+                Console.WriteLine("(без параметров) Второй поток " + i * i);
                 Thread.Sleep(400);
             }
         }
 
         static void Count1(object? intArg)
         {
-            if (intArg is int n)
+            if (intArg is int i)
             {
-                for (int i = 0; i < n; i++)
+                for (i = 0; i < 10; i++)
                 {
-                    Console.WriteLine("Второй поток " + i * i);
+                    Console.WriteLine("(с параметрами) Второй поток " + i * i);
                     Thread.Sleep(400);
                 }
             }
+        }
+
+        static void CountAutoResetEvent()
+        {
+            autoResetEvent.WaitOne();
+            for (i = 0; i < 10; i++)
+            {
+                Console.WriteLine("(auto reset event) Второй поток " + i * i);
+                Thread.Sleep(400);
+            }
+            autoResetEvent.Set();
+
+        }
+
+        static void CountMutex()
+        {
+            mutex.WaitOne();
+            for (i = 0; i < 10; i++)
+            {
+                Console.WriteLine("(mutex) Второй поток " + i * i);
+                Thread.Sleep(400);
+            }
+            mutex.ReleaseMutex();
+
         }
 
     }
