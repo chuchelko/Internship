@@ -1,6 +1,7 @@
 ﻿namespace Problem15
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
@@ -61,25 +62,19 @@
             //то мы можем получить сразу несколько исключений одномоментно для каждой выполняемой задачи.
             //Переделать метод из пункта 9. Сделать обработку исключений сразу нескольких выполняемых задач.
             //12. Можно ли await использовать в блоках catch и finally? - можно
-            var task111 = FactorialWithExceptionAsync(3);
-            var task112 = FactorialWithExceptionAsync(-1);
-            var task113 = FactorialWithExceptionAsync(-3);
-            var tasks11 = Task.WhenAll(task111, task112, task113);
+            List<Task> tasks12 = new List<Task>();
+            tasks12.Add(FactorialWithExceptionAsync(3));
+            tasks12.Add(FactorialWithExceptionAsync(-1));
+            tasks12.Add(FactorialWithExceptionAsync(-3));
             try
             {
-                await tasks11;
+                await Task.WhenAll(tasks12.ToArray());
             }
-            catch
+            catch(Exception ex)
             {
-                if(tasks11.Exception != null)
-                    foreach(var exception in tasks11.Exception?.InnerExceptions)
-                        Console.WriteLine(exception.Message);
+                
+                    Console.WriteLine(ex.Message);
 
-                Console.WriteLine(await FactorialWithExceptionAsync(3));
-            }
-            finally
-            {
-                Console.WriteLine(await FactorialWithExceptionAsync(6));
             }
 
             Console.WriteLine($"{await task1} {await task2} {await task3}");

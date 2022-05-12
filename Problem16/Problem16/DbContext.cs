@@ -32,7 +32,8 @@
             using (session.BeginTransaction())
             {
                 var items = session.CreateCriteria<User>().List<User>();
-                return items;
+                var items2 = session.Query<User>().ToList();
+                return items2;
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿namespace FourthTask
 {
     using System;
+    using System.Threading;
 
     internal class Program
     {
@@ -13,7 +14,10 @@
                 reciever.Recieve();
 
             for (int i = 1; i < 51; i++)
+            {
                 sender.Send(i);
+                Thread.Sleep(50);
+            }
         }
     }
 }

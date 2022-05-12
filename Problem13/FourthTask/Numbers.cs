@@ -8,9 +8,9 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    internal class Numbers
+    internal static class Numbers
     {
-        private static Queue<int> _info = new Queue<int>();
+        private static int? _number = null;
 
         private static object _addingLocker = new object();
 
@@ -21,7 +21,11 @@
             try
             {
                 Monitor.Enter(_addingLocker);
-                _info.Enqueue(data);
+
+                if(_number.HasValue)
+                    Monitor.Wait(_addingLocker);
+
+                _number = data;
                 Monitor.Enter(_gettingLocker);
                 Monitor.Pulse(_gettingLocker);
                 Monitor.Exit(_gettingLocker);
@@ -40,8 +44,15 @@
             {
                 Monitor.Enter(_gettingLocker);
 
-                while (!_info.TryDequeue(out result))
+                if(!_number.HasValue)
+                {
                     Monitor.Wait(_gettingLocker);
+                }
+                result = _number.Value;
+                _number = null;
+                Monitor.Enter(_addingLocker);
+                Monitor.Pulse(_addingLocker);
+                Monitor.Exit(_addingLocker);
             }
             finally
             {

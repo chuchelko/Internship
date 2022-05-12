@@ -21,7 +21,10 @@
             new User { FirstName = "Maxim", Email = "maximemail", SecondName = "Shafiullin"},
             new User { FirstName = "Marat", Email= "maratemail"}});
 
-            Console.WriteLine(users[0].FirstName + ' ' + users[1].FirstName);
+            foreach (var user in users)
+            {
+                Console.WriteLine(user.FirstName + ' ' + user.Email);
+            }
         }
 
     }    

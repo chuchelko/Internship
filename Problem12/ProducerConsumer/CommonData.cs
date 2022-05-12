@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System.Linq;
     using System.Text;
     using System.Threading;
@@ -10,7 +11,7 @@
     internal static class CommonData
     {
         private static List<int> _info = new List<int>();
-
+        
         private static object _newDataAddingLocker = new object();
 
         private static object _dataProducingLocker = new object();
