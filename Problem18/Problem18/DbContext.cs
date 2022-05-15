@@ -14,46 +14,17 @@
     using NHibernate.Cfg;
     using NHibernate.Tool.hbm2ddl;
 
+    using Problem18;
+
     internal class DbContext
     {
-
-        public IList<User> FillAndGetUsers(List<User> users)
+        private static MyInterceptor interceptor = new MyInterceptor();
+        public ISession GetSession()
         {
-            var sessionFactory = CreateSessionFactory();
-
-            using var session = sessionFactory.OpenSession();
-            using var trans = session.BeginTransaction();
-
-            
-            session.Query<User>().ToList().ForEach(u => session.Delete(u));
-
-            session.SetBatchSize(5);
-
-            int i = 0;
-            if (users != null)
-                foreach (var user in users)
-                {
-                    if (i == 5)
-                    {
-
-                        i = 0;
-                    }
-                    session.SaveOrUpdate(user);
-                    i++;
-                }
-
-            trans.Commit();
-
-
-            using (session.BeginTransaction())
-            {
-                var items = session.CreateCriteria<User>().List<User>();
-                var items2 = session.Query<User>().ToList();
-                return items2;
-            }
+            return CreateSessionFactory().OpenSession();
         }
 
-        private ISessionFactory CreateSessionFactory()
+        private ISessionBuilder CreateSessionFactory()
         {
             return Fluently
                 .Configure()
@@ -63,13 +34,17 @@
                             .Port(5432)
                             .Database("userdb")
                             .Username("postgres")
-                            .Password("password")).ShowSql().AdoNetBatchSize(5))
+                            .Password("password")).AdoNetBatchSize(5))
                 .Cache(cache => 
                     cache.UseQueryCache()
                     .UseMinimalPuts())
-                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<User>())
+                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Worker>())
                 .ExposeConfiguration(TreatConfiguration)
-                .BuildSessionFactory();
+                //.ExposeConfiguration(c => 
+                //    c.SetProperty(@"nhibernate-logger", @"NHibernate.NLogLoggerFactory, NHibernate.NLog"))
+                .BuildSessionFactory()
+                .WithOptions()
+                .Interceptor(new MyInterceptor());
         }
 
         private static void TreatConfiguration(Configuration configuration)

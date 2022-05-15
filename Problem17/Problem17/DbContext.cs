@@ -17,40 +17,9 @@
     internal class DbContext
     {
 
-        public IList<User> FillAndGetUsers(List<User> users)
+        public ISession GetSession()
         {
-            var sessionFactory = CreateSessionFactory();
-
-            using var session = sessionFactory.OpenSession();
-            using var trans = session.BeginTransaction();
-
-            
-            session.Query<User>().ToList().ForEach(u => session.Delete(u));
-
-            session.SetBatchSize(5);
-
-            int i = 0;
-            if (users != null)
-                foreach (var user in users)
-                {
-                    if (i == 5)
-                    {
-
-                        i = 0;
-                    }
-                    session.SaveOrUpdate(user);
-                    i++;
-                }
-
-            trans.Commit();
-
-
-            using (session.BeginTransaction())
-            {
-                var items = session.CreateCriteria<User>().List<User>();
-                var items2 = session.Query<User>().ToList();
-                return items2;
-            }
+            return CreateSessionFactory().OpenSession();
         }
 
         private ISessionFactory CreateSessionFactory()
@@ -67,7 +36,7 @@
                 .Cache(cache => 
                     cache.UseQueryCache()
                     .UseMinimalPuts())
-                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<User>())
+                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Worker>())
                 .ExposeConfiguration(TreatConfiguration)
                 .BuildSessionFactory();
         }

@@ -17,13 +17,35 @@
         static void Main(string[] args)
         {
             DbContext db = new DbContext();
-            IList<User> users = db.FillAndGetUsers(new List<User> {
-            new User { FirstName = "Maxim", Email = "maximemail", SecondName = "Shafiullin"},
-            new User { FirstName = "Marat", Email= "maratemail"}});
 
-            foreach (var user in users)
+            List<User> users = new List<User>();
+            for(int i = 0; i < 2; i++)
             {
-                Console.WriteLine(user.FirstName + ' ' + user.Email);
+                User user = new User()
+                {
+                    FirstName = "name" + i,
+                    Email = "email",
+                    Location = new Location()
+                    {
+                        Country = "country " + i,
+                        City = "Elabuga",
+                        Adress = "Adress"
+                    }
+                };
+                user.Add(new Post() { CreationTime = DateTime.Now, Text = "PostText1 " + i });
+                user.Add(new Post() { CreationTime = DateTime.Now, Text = "PostText2 " + i});
+                users.Add(user);
+            };
+            
+
+            IList<User> recievedUsers = db.FillAndGetUsers(users);
+
+            foreach (var user in recievedUsers)
+            {
+                Console.WriteLine(user.FirstName + ' ' + user.Email + ' ' + user.Location.Country);
+                if(user.Posts != null)
+                    foreach(var post in user.Posts)
+                        Console.WriteLine("\t" + post.Text + " Created at " + post.CreationTime);
             }
         }
 
