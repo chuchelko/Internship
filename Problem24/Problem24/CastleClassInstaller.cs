@@ -18,7 +18,7 @@
 
             container.Register(
 
-                Component.For<TransientClass>().ImplementedBy<TransientClass>().LifestyleTransient(),
+                Component.For<TransientClass>().LifestyleTransient(),
 
                 Component.For<ICastleClass>()
                     .ImplementedBy<CastleClass>()
